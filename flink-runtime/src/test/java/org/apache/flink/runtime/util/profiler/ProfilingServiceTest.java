@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +44,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /** Unit tests for {@link ProfilingService}. */
+@Isolated
 public class ProfilingServiceTest extends TestLogger {
     private static final String NO_ACCESS_TO_PERF_EVENTS = "No access to perf events.";
     private static final String NO_ALLOC_SYMBOL_FOUND = "No AllocTracer symbols found.";
@@ -54,7 +56,8 @@ public class ProfilingServiceTest extends TestLogger {
     private final Configuration configs = new Configuration();
 
     @BeforeEach
-    void setUp(@TempDir Path tempDir) {
+    void setUp(@TempDir Path tempDir) throws IOException {
+        ProfilingService.getInstance(configs).close();
         configs.set(RestOptions.MAX_PROFILING_HISTORY_SIZE, HISTORY_SIZE_LIMIT);
         configs.set(RestOptions.PROFILING_RESULT_DIR, tempDir.toString());
         profilingService = ProfilingService.getInstance(configs);
