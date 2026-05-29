@@ -28,6 +28,7 @@ import org.apache.flink.runtime.rest.messages.MessageHeaders;
 import org.apache.flink.runtime.rest.messages.ProfilingInfo;
 import org.apache.flink.runtime.rest.messages.cluster.ProfilingRequestBody;
 import org.apache.flink.runtime.util.profiler.ProfilingService;
+import org.apache.flink.runtime.util.profiler.ProfilingServiceSingleton;
 import org.apache.flink.runtime.webmonitor.RestfulGateway;
 import org.apache.flink.runtime.webmonitor.retriever.GatewayRetriever;
 import org.apache.flink.util.concurrent.FutureUtils;
@@ -55,7 +56,7 @@ public class JobManagerProfilingHandler
         super(leaderRetriever, timeout, responseHeaders, messageHeaders);
         this.maxDurationInSeconds =
                 configuration.get(RestOptions.MAX_PROFILING_DURATION).getSeconds();
-        this.profilingService = ProfilingService.getInstance(configuration);
+        this.profilingService = ProfilingServiceSingleton.getInstance(configuration);
     }
 
     @Override

@@ -140,6 +140,7 @@ import org.apache.flink.runtime.taskmanager.TaskManagerActions;
 import org.apache.flink.runtime.taskmanager.UnresolvedTaskManagerLocation;
 import org.apache.flink.runtime.util.GroupCache;
 import org.apache.flink.runtime.util.profiler.ProfilingService;
+import org.apache.flink.runtime.util.profiler.ProfilingServiceSingleton;
 import org.apache.flink.runtime.webmonitor.threadinfo.ThreadInfoSamplesRequest;
 import org.apache.flink.types.SerializableOptional;
 import org.apache.flink.util.CollectionUtil;
@@ -390,7 +391,7 @@ public class TaskExecutor extends RpcEndpoint implements TaskExecutorGateway {
                 Executors.newSingleThreadScheduledExecutor(sampleThreadFactory);
         this.threadInfoSampleService = new ThreadInfoSampleService(sampleExecutor);
         this.profilingService =
-                ProfilingService.getInstance(taskManagerConfiguration.getConfiguration());
+                ProfilingServiceSingleton.getInstance(taskManagerConfiguration.getConfiguration());
 
         this.slotAllocationSnapshotPersistenceService =
                 taskExecutorServices.getSlotAllocationSnapshotPersistenceService();

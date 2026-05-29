@@ -27,6 +27,7 @@ import org.apache.flink.runtime.rest.messages.EmptyRequestBody;
 import org.apache.flink.runtime.rest.messages.MessageHeaders;
 import org.apache.flink.runtime.rest.messages.ProfilingInfoList;
 import org.apache.flink.runtime.util.profiler.ProfilingService;
+import org.apache.flink.runtime.util.profiler.ProfilingServiceSingleton;
 import org.apache.flink.runtime.webmonitor.RestfulGateway;
 import org.apache.flink.runtime.webmonitor.retriever.GatewayRetriever;
 
@@ -51,7 +52,7 @@ public class JobManagerProfilingListHandler
                     messageHeaders,
             final Configuration configuration) {
         super(leaderRetriever, timeout, responseHeaders, messageHeaders);
-        this.profilingService = ProfilingService.getInstance(configuration);
+        this.profilingService = ProfilingServiceSingleton.getInstance(configuration);
     }
 
     @Override

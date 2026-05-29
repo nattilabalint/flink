@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-/** Unit tests for {@link ProfilingService}. */
+/** Unit tests for {@link ProfilingServiceSingleton}. */
+@Isolated
 public class ProfilingServiceTest extends TestLogger {
     private static final String NO_ACCESS_TO_PERF_EVENTS = "No access to perf events.";
     private static final String NO_ALLOC_SYMBOL_FOUND = "No AllocTracer symbols found.";
@@ -54,27 +56,36 @@ public class ProfilingServiceTest extends TestLogger {
     private final Configuration configs = new Configuration();
 
     @BeforeEach
-    void setUp(@TempDir Path tempDir) {
+    void setUp(@TempDir Path tempDir) throws IOException {
+
         configs.set(RestOptions.MAX_PROFILING_HISTORY_SIZE, HISTORY_SIZE_LIMIT);
         configs.set(RestOptions.PROFILING_RESULT_DIR, tempDir.toString());
-        profilingService = ProfilingService.getInstance(configs);
+
+        // do not use ProfilingService.getInstance(configs) here, because parallelly running
+        // previous tests possibly initialized the ProfilingService singleton instance, with an
+        // arbitrary PROFILING_RESULT_DIR value (e.g. the default /tmp), so the values passed by the
+        // 'configs' has no effect
+        ((ProfilingServiceSingleton) ProfilingServiceSingleton.getInstance(configs)).close();
+        profilingService = ProfilingServiceSingleton.getInstance(configs);
     }
 
     @AfterEach
     void tearDown() throws IOException {
-        profilingService.close();
+        ((ProfilingServiceSingleton) profilingService).close();
     }
 
     @Test
     public void testSingleton() throws IOException {
-        try (ProfilingService testService = ProfilingService.getInstance(configs)) {
+        try (ProfilingServiceSingleton testService =
+                (ProfilingServiceSingleton) ProfilingServiceSingleton.getInstance(configs)) {
             Assertions.assertEquals(profilingService, testService);
         }
     }
 
     @Test
     void testProfilingConfigurationWorkingAsExpected() throws IOException {
-        try (ProfilingService testService = ProfilingService.getInstance(configs)) {
+        try (ProfilingServiceSingleton testService =
+                (ProfilingServiceSingleton) ProfilingServiceSingleton.getInstance(configs)) {
             Assertions.assertEquals(
                     configs.get(RestOptions.PROFILING_RESULT_DIR),
                     testService.getProfilingResultDir());
@@ -167,9 +178,11 @@ public class ProfilingServiceTest extends TestLogger {
     private void verifyRollingDeletionWorks(TestInfo testInfo) {
         final String resourceId = RESOURCE_ID + "_" + testInfo.getTestMethod().get().getName();
         ArrayDeque<ProfilingInfo> profilingList =
-                profilingService.getProfilingListForTest(resourceId);
+                ((ProfilingServiceSingleton) profilingService).getProfilingListForTest(resourceId);
         // Profiling History shouldn't exceed history size limit.
-        Assertions.assertTrue(profilingList.size() <= profilingService.getHistorySizeLimit());
+        Assertions.assertTrue(
+                profilingList.size()
+                        <= ((ProfilingServiceSingleton) profilingService).getHistorySizeLimit());
         // Profiling History files should be rolling deleted.
         Set<String> resultFileNames = new HashSet<>();
         File configuredDir = new File(profilingService.getProfilingResultDir());
@@ -192,7 +205,7 @@ public class ProfilingServiceTest extends TestLogger {
     }
 
     private void waitForProfilingFinished() throws InterruptedException {
-        while (!profilingService.getProfilingFuture().isDone()) {
+        while (!((ProfilingServiceSingleton) profilingService).getProfilingFuture().isDone()) {
             Thread.sleep(1000);
         }
     }
