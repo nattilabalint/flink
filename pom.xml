@@ -1821,19 +1821,19 @@ under the License.
 						<!--suppress MavenModelInspection -->
 						<test.randomization.seed>${test.randomization.seed}</test.randomization.seed>
 						<junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
-						<!-- Enabled the parallel test execution feature. -->
-						<!-- Tests and test classes can be enabled for concurrent execution using @Execution(ExecutionMode.CONCURRENT). -->
-						<junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
-						<!-- Tests are by default executed by a single thread; parallel execution is opt-in. -->
-						<junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>
-						<!-- Tests suites are by default executed by a single thread; parallel execution is opt-in. -->
-						<junit.jupiter.execution.parallel.mode.classes.default>same_thread</junit.jupiter.execution.parallel.mode.classes.default>
-						<!-- automatically adjust parallelism based on available cpu/processor cores -->
-						<junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>
-						<!-- configuration parameter can be used to limit the maximum number of threads -->
-						<junit.jupiter.execution.parallel.config.dynamic.max-pool-size-factor>${test.dynamic.max-pool-size-factor}</junit.jupiter.execution.parallel.config.dynamic.max-pool-size-factor>
-						<!-- factor to be multiplied by the number of available processors/cores to determine the desired parallelism for the dynamic configuration strategy -->
-						<junit.jupiter.execution.parallel.config.dynamic.factor>${test.dynamic.factor}</junit.jupiter.execution.parallel.config.dynamic.factor>
+<!--						&lt;!&ndash; Enabled the parallel test execution feature. &ndash;&gt;-->
+<!--						&lt;!&ndash; Tests and test classes can be enabled for concurrent execution using @Execution(ExecutionMode.CONCURRENT). &ndash;&gt;-->
+<!--						<junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>-->
+<!--						&lt;!&ndash; Tests are by default executed by a single thread; parallel execution is opt-in. &ndash;&gt;-->
+<!--						<junit.jupiter.execution.parallel.mode.default>same_thread</junit.jupiter.execution.parallel.mode.default>-->
+<!--						&lt;!&ndash; Tests suites are by default executed by a single thread; parallel execution is opt-in. &ndash;&gt;-->
+<!--						<junit.jupiter.execution.parallel.mode.classes.default>same_thread</junit.jupiter.execution.parallel.mode.classes.default>-->
+<!--						&lt;!&ndash; automatically adjust parallelism based on available cpu/processor cores &ndash;&gt;-->
+<!--						<junit.jupiter.execution.parallel.config.strategy>dynamic</junit.jupiter.execution.parallel.config.strategy>-->
+<!--						&lt;!&ndash; configuration parameter can be used to limit the maximum number of threads &ndash;&gt;-->
+<!--						<junit.jupiter.execution.parallel.config.dynamic.max-pool-size-factor>${test.dynamic.max-pool-size-factor}</junit.jupiter.execution.parallel.config.dynamic.max-pool-size-factor>-->
+<!--						&lt;!&ndash; factor to be multiplied by the number of available processors/cores to determine the desired parallelism for the dynamic configuration strategy &ndash;&gt;-->
+<!--						<junit.jupiter.execution.parallel.config.dynamic.factor>${test.dynamic.factor}</junit.jupiter.execution.parallel.config.dynamic.factor>-->
 					</systemPropertyVariables>
 					<!-- This is picked up by IntelliJ -->
 					<argLine>${flink.surefire.baseArgLine}</argLine>
